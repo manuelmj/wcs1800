@@ -72,15 +72,18 @@ int ADC_lectura(const char  bit0,const char bit1,const char bit2,const char  bit
     
 
 float lectura_WSC1800(void){
-
-      int pasos=ADC_lectura(0,1,0,1);
       float voltaje=0.0;
       float corriente=0.0;
-      
-
-          float voltaje_puro= pasos*RESOL;
+    //  float voltaje_puro=0.0;
+          
+      int pasos=ADC_lectura(0,1,0,1);
+      if(pasos>512){
+        float  voltaje_puro= pasos*RESOL;
           voltaje=(float)voltaje_puro-QOV;
           corriente=(float)(voltaje/FACTOR)-(OFFSET_MAG);
+
+        }else corriente=0;
+        
         return(corriente);
 
       
