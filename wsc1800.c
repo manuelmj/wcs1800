@@ -1,9 +1,14 @@
+/*
+ESCRITO POR : MANUEL ALFONSO MANJARRES RIVERA
+FECHA:13/03/2021
+*/
+
 
 
 #define FACTOR (66.0/1000)
 #define QOV (0.5*5.0)
 #define RESOL (5.0/1023.0)
-#define OFFSET_MAG (25/1000)
+#define OFFSET_MAG (0.5)
 #define TRUE 1
 
 /*PROTOTIPOS DE FUNCIONES*/
@@ -43,7 +48,7 @@ void main() {
   
      while(TRUE){
 
-             corriente_promedio=prom_corrinte(500);
+             corriente_promedio=prom_corrinte(300);
              FloatToStr(corriente_promedio,str);
              UART1_Write_Text(str);
              UART1_Write_Text("\r\n") ;
@@ -74,16 +79,17 @@ int ADC_lectura(const char  bit0,const char bit1,const char bit2,const char  bit
 float lectura_WSC1800(void){
       float voltaje=0.0;
       float corriente=0.0;
-    //  float voltaje_puro=0.0;
+      float voltaje_puro=0.0;
           
       int pasos=ADC_lectura(0,1,0,1);
-      if(pasos>512){
-        float  voltaje_puro= pasos*RESOL;
+     
+       if(pasos>=512){
+         voltaje_puro=(float)pasos*RESOL;
           voltaje=(float)voltaje_puro-QOV;
           corriente=(float)(voltaje/FACTOR)-(OFFSET_MAG);
 
-        }else corriente=0;
-        
+       }else corriente=0.0;
+
         return(corriente);
 
       
@@ -96,7 +102,7 @@ float prom_corrinte( const unsigned int max){
            float sum=0.0;
            float aux=0.0;
 
-      for(cont=0;cont<=max;cont++){
+      for(cont=0;cont<max;cont++){
 
              aux=lectura_WSC1800(void);
              sum+=aux;
@@ -104,5 +110,5 @@ float prom_corrinte( const unsigned int max){
           
          }
 
-      return (sum/cont);
+      return ((sum/cont));
      }
